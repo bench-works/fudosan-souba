@@ -47,7 +47,7 @@ const nearby = data.cities
       <h2>{city.name}の町名別の相場</h2>
       <div class="card scroll">
         <table>
-          <thead><tr><th>町名</th><th>㎡単価</th><th>価格（中央値）</th></tr></thead>
+          <thead><tr><th>町名</th><th>㎡単価</th><th>価格<wbr />（中央値）</th></tr></thead>
           <tbody>
             {districts.map((d) => (
               <tr>
@@ -69,4 +69,6 @@ const nearby = data.cities
     border: 1px solid var(--line); border-radius: 999px; background: var(--surface); text-decoration: none; font-size: 14.5px;
   }
   .chip span { font-size: 12.5px; color: var(--muted); }
+  /* 見出し「価格（中央値）」は括弧の前で折り返す */
+  th { word-break: keep-all; }
 </style>

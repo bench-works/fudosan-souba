@@ -4,14 +4,16 @@ import { man, unitMan, pct } from '../lib/format';
 
 interface Props { cities: City[] }
 const cities = [...Astro.props.cities].sort((a, b) => (b.stats.unitPrice ?? 0) - (a.stats.unitPrice ?? 0));
+// 「横浜市保土ケ谷区」のような長い名前は、スマホでは「市・郡」の後ろで折り返して前年比の列まで画面に収める
+const parts = (name: string) => name.match(/^(.+?[市郡])(.+)$/)?.slice(1) ?? [name];
 ---
 <div class="card scroll">
   <table>
-    <thead><tr><th>市区町村</th><th>㎡単価</th><th>価格（中央値）</th><th>前年比</th></tr></thead>
+    <thead><tr><th>市区町村</th><th>㎡単価</th><th>価格<wbr />（中央値）</th><th>前年比</th></tr></thead>
     <tbody>
       {cities.map((c) => (
         <tr>
-          <td><a href={`/${c.prefSlug}/${c.code}/`}>{c.name}</a></td>
+          <td class="name"><a href={`/${c.prefSlug}/${c.code}/`}>{parts(c.name).map((p, i) => <>{i > 0 && <wbr />}{p}</>)}</a></td>
           <td>{unitMan(c.stats.unitPrice)}</td>
           <td>{man(c.stats.price)}</td>
           <td class={c.stats.yoy == null ? '' : c.stats.yoy >= 0 ? 'up' : 'down'}>{pct(c.stats.yoy)}</td>
@@ -24,4 +26,7 @@ const cities = [...Astro.props.cities].sort((a, b) => (b.stats.unitPrice ?? 0) -
 <style>
   .up { color: var(--up); }
   .down { color: var(--down); }
+  @media (max-width: 480px) {
+    .name, th { white-space: normal; word-break: keep-all; }
+  }
 </style>
