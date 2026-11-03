@@ -204,6 +204,10 @@ const graph = [siteLd, ...breadcrumbLd, ...jsonLd];
   .scroll { overflow-x: auto; }
   @media (max-width: 480px) {
     table { font-size: 13.5px; }
+    /* 列の見出しは折り返してよい。左右の余白も少し詰めて、横にずらさなくても表全体が見えるようにする */
+    th, td { padding-left: 4px; padding-right: 4px; }
+    td:first-child a { margin: -10px -4px; padding: 10px 4px; }
+    thead th { white-space: normal; }
     .card.scroll { padding: 10px 12px; }
   }
 

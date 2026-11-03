@@ -102,7 +102,7 @@ const faq = faqItems(place, s, year);
       {s.recent.map((r) => (
         <tr>
           <td>{r.year}年{r.quarter}Q{showDistrict && <><br /><span class="note">{r.district || '—'}</span></>}</td>
-          <td>{r.plan || '—'}<br /><span class="note">{r.area}㎡</span></td>
+          <td class="plan">{r.plan || '—'}<br /><span class="note">{r.area}㎡</span></td>
           <td>{r.buildYear ? `${r.buildYear}年` : '—'}</td><td>{man(r.price)}</td>
         </tr>
       ))}
@@ -152,6 +152,9 @@ const faq = faqItems(place, s, year);
   .summary ul { margin: 0; padding-left: 1.1em; }
   .summary li { margin-bottom: 6px; }
   .summary li:last-child { margin-bottom: 0; }
+
+  /* 「オープンフロア」など長い間取り名は、スマホでは折り返して表を画面幅に収める */
+  @media (max-width: 480px) { .plan { white-space: normal; min-width: 4.5em; } }
 
   .faq { display: grid; gap: 10px; }
   .qa { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow); }
