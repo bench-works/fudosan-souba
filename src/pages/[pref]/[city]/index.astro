@@ -5,7 +5,7 @@ import { data, prefBySlug, commentary } from '../../../lib/data';
 import { faqItems, faqLd, datasetLd } from '../../../lib/seo';
 import { SITE } from '../../../config';
 import type { City } from '../../../lib/data';
-import { man, unitMan } from '../../../lib/format';
+import { man, unitMan, pct } from '../../../lib/format';
 
 export function getStaticPaths() {
   return data.cities.map((city) => ({ params: { pref: city.prefSlug, city: city.code }, props: { city } }));
@@ -17,6 +17,7 @@ const title = `${city.name}の中古マンション相場【${year}年】間取�
 const districts = data.districts.filter((d) => d.cityCode === city.code);
 const url = new URL(`/${pref.slug}/${city.code}/`, SITE.url).href;
 const ld = [faqLd(faqItems(city.name, city.stats, year)), datasetLd(city.name, city.stats, url, data.generatedAt)];
+const yoyNote = city.stats.yoy != null ? `、前年比${pct(city.stats.yoy)}` : '';
 // 価格帯が近い市区町村（相場を比較したい人のための導線）
 const nearby = data.cities
   .filter((c) => c.prefSlug === city.prefSlug && c.code !== city.code && c.stats.unitPrice != null)
@@ -25,7 +26,7 @@ const nearby = data.cities
 ---
 <Base
   title={title}
-  description={`${pref.name}${city.name}の中古マンションの取引価格は中央値${man(city.stats.price)}（㎡単価${unitMan(city.stats.unitPrice)}）。国土交通省の取引データから、間取り別・築年数別の相場と推移をまとめました。`}
+  description={`${pref.name}${city.name}の中古マンションの取引価格は中央値${man(city.stats.price)}（㎡単価${unitMan(city.stats.unitPrice)}${yoyNote}）。国土交通省の取引データから、間取り別・築年数別の相場と推移をまとめました。`}
   jsonLd={ld}
   crumbs={[
     { name: 'トップ', href: '/' },
