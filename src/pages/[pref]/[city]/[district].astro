@@ -5,7 +5,7 @@ import { data, prefBySlug, cityByCode, commentary } from '../../../lib/data';
 import { faqItems, faqLd, datasetLd } from '../../../lib/seo';
 import { SITE } from '../../../config';
 import type { District } from '../../../lib/data';
-import { man, unitMan } from '../../../lib/format';
+import { man, unitMan, pct } from '../../../lib/format';
 
 export function getStaticPaths() {
   return [
@@ -34,11 +34,12 @@ const title = d
 const siblings = d ? data.districts.filter((x) => x.cityCode === info.cityCode && x.name !== info.name) : [];
 const url = new URL(`${cityUrl}${encodeURIComponent(info.name)}/`, SITE.url).href;
 const ld = d ? [faqLd(faqItems(place, d.stats, year)), datasetLd(place, d.stats, url, data.generatedAt)] : [];
+const yoyNote = d?.stats.yoy != null ? `、前年比${pct(d.stats.yoy)}` : '';
 const description = d
-  ? `${pref.name}${place}の中古マンションの取引価格は中央値${man(d.stats.price)}（㎡単価${unitMan(d.stats.unitPrice)}）。過去5年の取引${d.stats.count.toLocaleString('ja-JP')}件をもとに、国土交通省の取引データから価格の推移をまとめました。`
+  ? `${pref.name}${place}の中古マンションの取引価格は中央値${man(d.stats.price)}（㎡単価${unitMan(d.stats.unitPrice)}${yoyNote}）。過去5年の取引${d.stats.count.toLocaleString('ja-JP')}件をもとに、国土交通省の取引データから価格の推移をまとめました。`
   : `${pref.name}${place}は、直近5年の取引件数が少なく相場を算出できないため、${city.name}全体の中古マンション相場をご覧ください。`;
 ---
-<Base title={title} description={description} jsonLd={ld} crumbs={crumbs}>
+<Base title={title} description={description} jsonLd={ld} crumbs={crumbs} noindex={!d}>
   {d ? (
     <>
       <h1>{title}</h1>
