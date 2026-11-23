@@ -8,9 +8,12 @@ interface Props {
   crumbs?: { name: string; href: string }[];
   /** 構造化データ（JSON-LD）。検索エンジンとAIに内容を正確に伝えるために使う */
   jsonLd?: Record<string, unknown>[];
+  /** 内容のないページ（例：データ不足で町名ページを案内のみにした場合）を検索結果から外す */
+  noindex?: boolean;
 }
-const { title, description, crumbs = [], jsonLd = [] } = Astro.props;
-const fullTitle = crumbs.length > 0 ? `${title}｜${SITE.name}` : title;
+const { title, description, crumbs = [], jsonLd = [], noindex = false } = Astro.props;
+// タイトルが長いページ（市区町村・町名ページ）は、検索結果で見切れないようサイト名を付けない
+const fullTitle = crumbs.length > 0 && title.length <= 20 ? `${title}｜${SITE.name}` : title;
 const canonical = new URL(Astro.url.pathname, SITE.url).href;
 const updated = data.generatedAt.slice(0, 10);
 
@@ -39,7 +42,7 @@ const graph = [siteLd, ...breadcrumbLd, ...jsonLd];
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    {data.isSample && <meta name="robots" content="noindex" />}
+    {(data.isSample || noindex) && <meta name="robots" content="noindex" />}
     <meta property="og:site_name" content={SITE.name} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
